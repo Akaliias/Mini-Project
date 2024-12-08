@@ -10,11 +10,15 @@ public class Item : MonoBehaviour
     private Vector3 lastPosition;
     private bool hasFallen;
 
+
+    // Initialize the last position of the item
     void Start()
     {
         lastPosition = transform.position;
     }
 
+
+    // Checks if the item has fallen below the fall height threshold and emits a sound if it has
     void Update()
     {
         if (!hasFallen && transform.position.y < lastPosition.y - fallHeightThreshold)
@@ -26,6 +30,8 @@ public class Item : MonoBehaviour
         lastPosition = transform.position;
     }
 
+
+    // Emits a sound that alerts enemies within the sound radius
     public void EmitSound()
     {
         Collider[] enemies = Physics.OverlapSphere(transform.position, soundRadius, enemyLayer);
@@ -39,6 +45,8 @@ public class Item : MonoBehaviour
         }
     }
 
+
+    // Resets the fall detection state and updates the last position
     public void ResetFallDetection()
     {
         hasFallen = false;

@@ -12,6 +12,8 @@ public class Telekenisis : MonoBehaviour
     private Item pickedUpSoundEmitter;
     private float objectDistance;
 
+
+    // Handles input for picking up and dropping objects, and moves the picked-up object with the camera
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -33,6 +35,7 @@ public class Telekenisis : MonoBehaviour
         }
     }
 
+    // Performs a raycast to pick up an object with the telekinesis layer and within the range
     void TryPickUpObject()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -60,6 +63,8 @@ public class Telekenisis : MonoBehaviour
         }
     }
 
+
+    // Drops the currently picked-up object and resets its state
     void DropObject()
     {
         if (pickedUpRigidbody != null)
@@ -77,16 +82,18 @@ public class Telekenisis : MonoBehaviour
         pickedUpObject = null;
     }
 
+    // Moves the picked-up object to follow the camera's position
     void MoveObjectWithCamera()
     {
         Vector3 newPosition = Camera.main.transform.position + Camera.main.transform.forward * objectDistance;
         pickedUpRigidbody.MovePosition(Vector3.Lerp(pickedUpObject.position, newPosition, moveSpeed * Time.deltaTime));
     }
 
+    // Adjusts the distance of the picked-up object based on mouse scroll input
     void AdjustObjectDistance()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         objectDistance += scroll * scrollSpeed;
-        objectDistance = Mathf.Clamp(objectDistance, 2f, 20f); // Adjust these values as needed
+        objectDistance = Mathf.Clamp(objectDistance, 2f, 20f); 
     }
 }

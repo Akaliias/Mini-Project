@@ -5,7 +5,7 @@ public class EnemyBehavior : MonoBehaviour
 {
     public float health = 100f;
     public float speed = 3.5f;
-    public float damage = 10f;
+    public float damage = 100f;
     public float fieldOfViewAngle = 110f;
     public float viewDistance = 10f;
     public Transform[] patrolPoints;
@@ -19,6 +19,8 @@ public class EnemyBehavior : MonoBehaviour
     private bool investigatingSound;
     private float investigationTimer;
 
+
+    // Initialize the NavMeshAgent and set the initial patrol point
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -33,6 +35,7 @@ public class EnemyBehavior : MonoBehaviour
         GoToNextPatrolPoint();
     }
 
+    // Update the enemies behavior based on whether the player is in sight or a sound is being investigated, if neither returns to patrol
     void Update()
     {
         if (navMeshAgent == null)
@@ -54,6 +57,7 @@ public class EnemyBehavior : MonoBehaviour
         DetectPlayer();
     }
 
+    // Set the next patrol point as the destination for the NavMeshAgent
     void GoToNextPatrolPoint()
     {
         if (patrolPoints.Length == 0)
@@ -66,6 +70,7 @@ public class EnemyBehavior : MonoBehaviour
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
 
+    // Continue patrolling if the agent is close to the current destination
     void Patrol()
     {
         if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
@@ -74,11 +79,14 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+    // Set the player's position as the destination for the NavMeshAgent
     void ChasePlayer()
     {
         navMeshAgent.destination = player.position;
     }
 
+
+    // Checks if the player is within the field of view and view distance, and sets playerInSight accordingly
     void DetectPlayer()
     {
         Vector3 directionToPlayer = player.position - transform.position;
@@ -100,6 +108,7 @@ public class EnemyBehavior : MonoBehaviour
         playerInSight = false;
     }
 
+    // Set the sound location and start investigating the sound
     public void HearSound(Vector3 location)
     {
         soundLocation = location;
@@ -109,6 +118,8 @@ public class EnemyBehavior : MonoBehaviour
         navMeshAgent.destination = soundLocation;
     }
 
+
+    // Investigate the sound location for a set duration, then returns to patrolling
     void InvestigateSound()
     {
         if (navMeshAgent.remainingDistance < 0.5f)
@@ -123,6 +134,8 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+
+    // Draw gizmos to visualize the enemy's field of view and detection range
     void OnDrawGizmos()
     {
         if (playerInSight)
@@ -142,5 +155,18 @@ public class EnemyBehavior : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawRay(transform.position, fovLine1);
         Gizmos.DrawRay(transform.position, fovLine2);
+    }
+
+    // Handles collision with the player and applies damage
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject == player.gameObject)
+        {
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+            }
+        }
     }
 }

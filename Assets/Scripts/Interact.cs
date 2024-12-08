@@ -5,6 +5,8 @@ public class Interact : MonoBehaviour
     public float interactRange = 2f; // Range within which the player can interact with items
     public UIManager uiManager; // Reference to the UIManager
 
+
+    // Checks for if the interaction key is pressed and attempts to pick up an item
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -13,6 +15,7 @@ public class Interact : MonoBehaviour
         }
     }
 
+    // Performs a raycast to detect items within the interaction range and adds their value to the UIManager
     void TryPickUpItem()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
